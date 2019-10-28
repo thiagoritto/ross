@@ -7,6 +7,7 @@ import matplotlib.lines as mlines
 import numpy as np
 import scipy.interpolate as interpolate
 
+from pathlib import Path
 from collections import namedtuple
 from ross.utils import read_table_file
 from ross.element import Element
@@ -184,6 +185,7 @@ class BearingElement(Element):
         frequency=None,
         tag=None,
         n_link=None,
+        color=None,
         scale_factor=1,
     ):
 
@@ -324,8 +326,8 @@ class BearingElement(Element):
         >>> bearing = bearing_example()
         >>> bearing.save('BearingElement.toml')
         """
-        data = self.load_data(file_name)
-        if type(self.frequency) == np.ndarray:
+        data = self.load_data(Path(file_name)/'BearingElement.toml')
+        if type(self.w) == np.ndarray:
             try:
                 self.frequency[0]
                 frequency = list(self.frequency)
@@ -344,7 +346,7 @@ class BearingElement(Element):
             "frequency": frequency,
             "tag": self.tag,
         }
-        self.dump_data(data, file_name)
+        self.dump_data(data, Path(file_name)/'BearingElement.toml')
 
     @staticmethod
     def load(file_name="BearingElement"):
@@ -990,7 +992,7 @@ class SealElement(BearingElement):
     cyx: float, array, optional
         Cross coupled damping in the y direction.
         (defaults to 0)
-    frequency: array, optional
+    w: array, optional
         Array with the speeds (rad/s).
     seal_leakage: float, optional
         Amount of leakage
