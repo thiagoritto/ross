@@ -265,7 +265,7 @@ class ShaftElement(Element):
         self.dump_data(data, Path(file_name)/'ShaftElement.toml')
 
     @staticmethod
-    def load(file_name="ShaftElement"):
+    def load(file_name=Path(os.getcwd())/"ShaftElement.toml"):
         """Load previously saved shaft elements from toml file.
 
         Parameters
@@ -287,7 +287,7 @@ class ShaftElement(Element):
         [ShaftElement(L=0.25, i_d=0.0, o_d=0.05, material='Steel', n=None)]
         """
         shaft_elements = []
-        with open("ShaftElement.toml", "r") as f:
+        with open(file_name, "r") as f:
             shaft_elements_dict = toml.load(f)
             for element in shaft_elements_dict["ShaftElement"]:
                 shaft_elements.append(
