@@ -127,7 +127,7 @@ class DiskElement(Element):
         Examples
         --------
         >>> disk = disk_example()
-        >>> disk.save('DiskElement.toml')
+        >>> disk.save()
         """
         data = self.load_data(Path(file_name)/'DiskElement.toml')
         data["DiskElement"][str(self.n)] = {
@@ -156,8 +156,8 @@ class DiskElement(Element):
         Examples
         --------
         >>> disk1 = disk_example()
-        >>> disk1.save('DiskElement.toml')
-        >>> list_of_disks = DiskElement.load('DiskElement.toml')
+        >>> disk1.save()
+        >>> list_of_disks = DiskElement.load()
         >>> disk1 == list_of_disks[0]
         True
         """
