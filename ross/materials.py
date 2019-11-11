@@ -6,9 +6,9 @@ some of the most common materials used in rotors.
 import os
 import numpy as np
 import toml
-
 import ross as rs
 
+from pathlib import Path
 __all__ = ["Material", "steel"]
 
 
@@ -52,7 +52,7 @@ class Material:
             sum([1 if i in ["E", "G_s", "Poisson"] else 0 for i in kwargs]) > 1
         ), "At least 2 arguments from E, G_s and Poisson should be provided"
 
-        self.name = name
+        self._name = name
         self.rho = rho
         self.E = kwargs.get("E", None)
         self.Poisson = kwargs.get("Poisson", None)
@@ -98,71 +98,64 @@ class Material:
             f"\nPoisson coefficient     : {float(self.Poisson):{2}.{8}}"
         )
 
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        try:
+            self._name = str(name)
+        except:
+            "Material's name must be a string."
     @staticmethod
-    def dump_data(data):
-        with open("available_materials.toml", "w") as f:
+    def dump_data(data, path=os.path.dirname(rs.__file__)):
+        with open(Path(path)/"available_materials.toml", "w") as f:
             toml.dump(data, f)
 
     @staticmethod
-    def load_data():
+    def load_data(path=os.path.dirname(rs.__file__)):
         try:
-            with open("available_materials.toml", "r") as f:
+            with open(Path(path)/"available_materials.toml", "r") as f:
                 data = toml.load(f)
         except FileNotFoundError:
             data = {"Materials": {}}
-            Material.dump_data(data)
+            Material.dump_data(data, path)
         return data
 
     @staticmethod
-    def use_material(name):
-        run_path = os.getcwd()
-        ross_path = os.path.dirname(rs.__file__)
-        os.chdir(ross_path)
-
-        data = Material.load_data()
+    def use_material(name, path=os.path.dirname(rs.__file__)):
+        data = Material.load_data(path)
         try:
             material = data["Materials"][name]
             return Material(**material)
         except KeyError:
             raise KeyError("There isn't a instanced material with this name.")
-        os.chdir(run_path)
 
     @staticmethod
-    def remove_material(name):
-        run_path = os.getcwd()
-        ross_path = os.path.dirname(rs.__file__)
-        os.chdir(ross_path)
-
-        data = Material.load_data()
+    def remove_material(name, path=os.path.dirname(rs.__file__)):
+        data = Material.load_data(os.path.dirname(rs.__file__))
         try:
             del data["Materials"][name]
         except KeyError:
             return "There isn't a saved material with this name."
         Material.dump_data(data)
-        os.chdir(run_path)
 
     @staticmethod
-    def available_materials():
-        run_path = os.getcwd()
-        ross_path = os.path.dirname(rs.__file__)
-        os.chdir(ross_path)
-
+    def available_materials(path=os.path.dirname(rs.__file__)):
         try:
-            data = Material.load_data()
+            data = Material.load_data(path)
             return list(data["Materials"].keys())
         except FileNotFoundError:
             return "There is no saved materials."
-        os.chdir(run_path)
 
-    def save_material(self):
-        run_path = os.getcwd()
-        ross_path = os.path.dirname(rs.__file__)
-        os.chdir(ross_path)
+    def save_material(self, path=os.path.dirname(rs.__file__)):
+        data = Material.load_data(path)
+        material_dict = self.__dict__.copy()
+        material_dict['name'] = material_dict.pop('_name')
+        data["Materials"][self.name] = material_dict
 
-        data = Material.load_data()
-        data["Materials"][self.name] = self.__dict__
-        Material.dump_data(data)
-        os.chdir(run_path)
+        Material.dump_data(data, path)
 
 
 steel = Material(name="Steel", rho=7810, E=211e9, G_s=81.2e9)
