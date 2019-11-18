@@ -109,6 +109,7 @@ class Material:
             self._name = str(name)
         except:
             "Material's name must be a string."
+
     @staticmethod
     def dump_data(data, path=os.path.dirname(rs.__file__)):
         with open(Path(path)/"available_materials.toml", "w") as f:

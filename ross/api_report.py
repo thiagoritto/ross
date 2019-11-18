@@ -804,7 +804,7 @@ class Report:
         # remove disks and seals from the rotor model
         bearing_list = [
             copy(b)
-            for b in self.rotor.bearing_seal_elements
+            for b in self.rotor.bearing_elements
             if b.__class__.__name__ != "SealElement"
         ]
 
@@ -821,7 +821,7 @@ class Report:
                 aux_rotor = Rotor(
                     shaft_elements=self.rotor.shaft_elements,
                     disk_elements=[],
-                    bearing_seal_elements=bearings,
+                    bearing_elements=bearings,
                     rated_w=self.rotor.rated_w,
                 )
                 modal = aux_rotor.run_modal(speed=oper_speed * np.pi / 30)
@@ -842,7 +842,7 @@ class Report:
                 aux_rotor = Rotor(
                     shaft_elements=self.rotor.shaft_elements,
                     disk_elements=[],
-                    bearing_seal_elements=bearings,
+                    bearing_elements=bearings,
                     rated_w=self.rotor.rated_w,
                 )
                 modal = aux_rotor.run_modal(speed=oper_speed * np.pi / 30)
@@ -1047,12 +1047,12 @@ class Report:
         # Build a list of seals
         seal_list = [
             copy(seal)
-            for seal in self.rotor.bearing_seal_elements
+            for seal in self.rotor.bearing_elements
             if seal.__class__.__name__ == "SealElement"
         ]
         bearing_list = [
             copy(b)
-            for b in self.rotor.bearing_seal_elements
+            for b in self.rotor.bearing_elements
             if b.__class__.__name__ != "SealElement"
         ]
 
@@ -1065,7 +1065,7 @@ class Report:
             aux_rotor = Rotor(
                 shaft_elements=self.rotor.shaft_elements,
                 disk_elements=[disk],
-                bearing_seal_elements=bearing_list,
+                bearing_elements=bearing_list,
                 rated_w=self.maxspeed,
             )
             modal = aux_rotor.run_modal(speed=self.maxspeed)
@@ -1080,7 +1080,7 @@ class Report:
         aux_rotor = Rotor(
             shaft_elements=self.rotor.shaft_elements,
             disk_elements=self.rotor.disk_elements,
-            bearing_seal_elements=bearing_list,
+            bearing_elements=bearing_list,
             rated_w=self.maxspeed,
         )
         modal = aux_rotor.run_modal(speed=self.maxspeed)
@@ -1095,7 +1095,7 @@ class Report:
             aux_rotor = Rotor(
                 shaft_elements=self.rotor.shaft_elements,
                 disk_elements=[],
-                bearing_seal_elements=bearings_seal,
+                bearing_elements=bearings_seal,
                 rated_w=self.rotor.rated_w,
             )
             modal = aux_rotor.run_modal(speed=self.maxspeed)
@@ -1110,7 +1110,7 @@ class Report:
         aux_rotor = Rotor(
             shaft_elements=self.rotor.shaft_elements,
             disk_elements=[],
-            bearing_seal_elements=self.rotor.bearing_seal_elements,
+            bearing_elements=self.rotor.bearing_elements,
             rated_w=self.maxspeed,
         )
         modal = aux_rotor.run_modal(speed=self.maxspeed)

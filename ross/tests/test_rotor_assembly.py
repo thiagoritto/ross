@@ -1243,7 +1243,7 @@ def test_save_load():
 def test_rotor_link():
     i_d = 0
     o_d = 0.05
-    n = 6
+    n = 10
     L = [0.25 for _ in range(n)]
 
     shaft_elem = [

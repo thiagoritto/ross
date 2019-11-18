@@ -327,7 +327,7 @@ class BearingElement(Element):
         >>> bearing.save()
         """
         data = self.load_data(Path(file_name)/'BearingElement.toml')
-        if type(self.w) == np.ndarray:
+        if type(self.frequency) == np.ndarray:
             try:
                 self.frequency[0]
                 frequency = list(self.frequency)
