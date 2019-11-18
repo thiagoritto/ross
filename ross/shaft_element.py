@@ -1192,7 +1192,9 @@ class ShaftTaperedElement(Element):
         ... )
         >>> shaft1.save()
         """
-        data = self.load_data(Path(file_name)/'ShaftElement.toml')
+        data = self.load_data(Path(file_name)/'ShaftElement.toml','ShaftTaperedElement')
+        if "ShaftTaperedElement" not in data.keys():
+            data["ShaftTaperedElement"] = {}
         try:
             data["ShaftTaperedElement"][str(self.n)] = {
                  "L": self.L,
