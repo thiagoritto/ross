@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import namedtuple
-
+from pathlib import Path
 import pandas as pd
 import toml
 
@@ -179,12 +179,12 @@ class Element(ABC):
         return pd.Series(attributes)
 
     @staticmethod
-    def load_data(file_name):
+    def load_data(file_path, element_name=None):
         """Loads elements data saved in a toml format.
 
         Parameters
         ----------
-        file_name: string
+        file_path: string
             The name of the file to be loaded.
 
         Returns
@@ -202,15 +202,18 @@ class Element(ABC):
         >>> BearingElement.load_data('BearingElement.toml') # doctest: +ELLIPSIS
         {'BearingElement': {'0': {'n': 0, 'kxx': [1000000.0, 1000000.0,...
         """
+        if element_name is None:
+            element_name = Path(file_path).parts[-1].split('.')[0]
+
         try:
-            with open(file_name, "r") as f:
+            with open(file_path, "r") as f:
                 data = toml.load(f)
-                if data == {"": {}}:
-                    data = {str(file_name.name)[:-5]: {}}
+                if element_name not in data.keys():
+                    data = {element_name: {}}
 
         except FileNotFoundError:
-            data = {str(file_name.name)[:-5]: {}}
-            Element.dump_data(data, file_name)
+            data = {element_name: {}}
+            Element.dump_data(data, file_path)
         return data
 
     @staticmethod

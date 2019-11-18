@@ -327,6 +327,8 @@ class BearingElement(Element):
         >>> bearing.save()
         """
         data = self.load_data(Path(file_name)/'BearingElement.toml')
+        if "BearingElement" not in data.keys():
+            data["BearingElement"] = {}
         if type(self.frequency) == np.ndarray:
             try:
                 self.frequency[0]

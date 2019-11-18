@@ -128,6 +128,8 @@ class DiskElement(Element):
         >>> disk.save()
         """
         data = self.load_data(Path(file_name)/'DiskElement.toml')
+        if "DiskElement" not in data.keys():
+           data["DiskElement"] = {}
         data["DiskElement"][str(self.n)] = {
             "n": self.n,
             "m": self.m,

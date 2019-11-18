@@ -258,6 +258,8 @@ class ShaftElement(Element):
         >>> shaft1.save()
         """
         data = self.load_data(Path(file_name)/'ShaftElement.toml')
+        if "ShaftElement" not in data.keys():
+            data["ShaftElement"] = {}
         data["ShaftElement"][str(self.n)] = {
             "L": self.L,
             "i_d": self.i_d,
@@ -1190,7 +1192,7 @@ class ShaftTaperedElement(Element):
         ... )
         >>> shaft1.save()
         """
-        data = self.load_data(Path(file_name)/"ShaftElement.toml")
+        data = self.load_data(Path(file_name)/'ShaftElement.toml')
         try:
             data["ShaftTaperedElement"][str(self.n)] = {
                  "L": self.L,
@@ -1209,8 +1211,9 @@ class ShaftTaperedElement(Element):
              }
         except KeyError:
             data["ShaftTaperedElement"] = {}
-            self.save(file_name)
-        self.dump_data(data, file_name)
+            self.dump_data(data, Path(file_name)/'ShaftElement.toml')
+            self.save(Path(file_name))
+        self.dump_data(data, Path(file_name)/"ShaftElement.toml")
 
     @staticmethod
     def load(file_name="ShaftTaperedElement"):

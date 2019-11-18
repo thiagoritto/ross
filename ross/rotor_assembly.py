@@ -37,7 +37,7 @@ from ross.results import (
 )
 from ross.shaft_element import ShaftElement, ShaftTaperedElement
 
-__all__ = ["Rotor", "rotor_example"]
+__all__ = ["Rotor", "rotor_example","rotor_example2"]
 
 # set style and colors
 plt.style.use("seaborn-white")
@@ -2029,11 +2029,11 @@ class Rotor(object):
             if '.toml' in el:
                 with open(Path(elements_path)/el, 'r') as f:
                     el_dict = toml.load(f)
-                    element_class = list(el_dict.keys())[0]
-                    for el_number in el_dict[element_class]:
-                        element = (element_class + f'(**{el_dict[element_class][el_number]})')
-                        elements.append(eval(element))
-            global_elements[convert(element_class+'s')] = elements
+                    for element_class in el_dict.keys():
+                        for el_number in el_dict[element_class]:
+                            element = (element_class + f'(**{el_dict[element_class][el_number]})')
+                            elements.append(eval(element))
+            global_elements[convert(el.split('.')[0]+'s')] = elements
 
         return Rotor(**global_elements, **parameters)
 
@@ -2454,8 +2454,56 @@ def rotor_example():
     L = [0.25 for _ in range(n)]
 
     shaft_elem = [
+        ShaftTaperedElement(
+            L=l, i_d_l=i_d, o_d_l=o_d, material=steel, shear_effects=True, rotary_inertia=True, gyroscopic=True, o_d_r=0.1
+        )
+        for l in L
+    ]
+
+    disk0 = DiskElement.from_geometry(
+        n=2, material=steel, width=0.07, i_d=0.05, o_d=0.28
+    )
+    disk1 = DiskElement.from_geometry(
+        n=4, material=steel, width=0.07, i_d=0.05, o_d=0.28
+    )
+
+    stfx = 1e6
+    stfy = 0.8e6
+    bearing0 = BearingElement(0, kxx=stfx, kyy=stfy, cxx=0)
+    bearing1 = BearingElement(6, kxx=stfx, kyy=stfy, cxx=0)
+
+    return Rotor(shaft_elem, [disk0, disk1], [bearing0, bearing1])
+
+
+def rotor_example2():
+    """This function returns an instance of a simple rotor with
+    two shaft elements, one disk and two simple bearings.
+    The purpose of this is to make available a simple model
+    so that doctest can be written using this.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    An instance of a rotor object.
+
+    Examples
+    --------
+    >>> rotor = rotor_example()
+    >>> modal = rotor.run_modal(speed=0)
+    >>> np.round(modal.wd[:4])
+    array([ 92.,  96., 275., 297.])
+    """
+    #  Rotor without damping with 6 shaft elements 2 disks and 2 bearings
+    i_d = 0
+    o_d = 0.05
+    n = 6
+    L = [0.25 for _ in range(n)]
+
+    shaft_elem = [
         ShaftElement(
-            l, i_d, o_d, steel, shear_effects=True, rotary_inertia=True, gyroscopic=True
+            L=l, i_d=i_d, o_d=o_d, material=steel, shear_effects=True, rotary_inertia=True, gyroscopic=True
         )
         for l in L
     ]
